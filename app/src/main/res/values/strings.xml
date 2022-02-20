@@ -1,3 +1,9 @@
 <resources>
     <string name="app_name">WordOfDay</string>
+    <string name="ok">OK</string>
+    <string name="wire_your_word">Напиши слово</string>
+    <string name="your_word">Ваше слово:</string>
+    <string name="max_of_words">Слово из 5 букв:</string>
+    <string name="info_need_five_letters">Слово должно быть из 5 букв!</string>
+    <string name="info_we_unknown_that_word">Мы не знаем такого слова, попробуйе другое</string>
 </resources>

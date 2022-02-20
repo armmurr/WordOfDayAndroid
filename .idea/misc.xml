@@ -3,7 +3,11 @@
   <component name="DesignSurface">
     <option name="filePathToZoomLevelMap">
       <map>
-        <entry key="app/src/main/res/layout/activity_main.xml" value="0.2776268115942029" />
+        <entry key="app/src/main/res/drawable-ldltr-small/rectagle.xml" value="0.2535" />
+        <entry key="app/src/main/res/drawable/rectangle.xml" value="0.2535" />
+        <entry key="app/src/main/res/drawable/rectangle_1.xml" value="0.2535" />
+        <entry key="app/src/main/res/layout/activity_main.xml" value="0.303135274251302" />
+        <entry key="app/src/main/res/layout/fiveletters.xml" value="1.0082236842105263" />
       </map>
     </option>
   </component>
