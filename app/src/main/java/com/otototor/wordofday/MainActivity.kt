@@ -16,6 +16,7 @@ MainActivity : AppCompatActivity() {
     private lateinit var fivelettersblock_4: View
     private lateinit var fivelettersblock_5: View
     private lateinit var fivelettersblock_6: View
+    private  var gameStatus: Int = GameStatus.NG
 
     private lateinit var textInputEditText: TextInputEditText
     private lateinit var words: List<String>
@@ -55,7 +56,7 @@ MainActivity : AppCompatActivity() {
 
     fun findInDatabase(word: String): Boolean {
         var finded: Boolean = false
-        if (words.contains(word)) {
+        if (words.contains(word.lowercase())) {
             finded = true
         }
         return finded
@@ -81,4 +82,6 @@ MainActivity : AppCompatActivity() {
 
     }
 }
+
+
 
