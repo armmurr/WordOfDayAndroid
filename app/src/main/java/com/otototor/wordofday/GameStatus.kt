@@ -9,6 +9,5 @@ class GameStatus {
             const val W4 = 4
             const val W5 = 5
             const val W6 = 6
-
         }
 }
