@@ -1,6 +1,7 @@
 package com.otototor.wordofday
 
 import android.content.Context
+import android.content.pm.ActivityInfo
 import android.content.res.TypedArray
 import android.os.Bundle
 import android.view.View
@@ -32,6 +33,7 @@ MainActivity : AppCompatActivity() {
         textInputEditText = findViewById(R.id.textInputEditText)
         words = Words().WordsLits
         generateMysteryWord()
+        setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
     }
 
     fun enterTheWord(view: View) {
@@ -53,11 +55,13 @@ MainActivity : AppCompatActivity() {
             } else {
                 fillLettersInFiveLettersView(lettersBlocs[gameStatus-1],inputText)
                 FindLetterInMysteryWord(inputText,lettersBlocs[gameStatus-1])
-                if (inputText.lowercase() == mysteryWord) winToast(true)
-                if (gameStatus == GameStatus.W6){
-                    gameStatus = GameStatus.NG
-                    winToast(false)
-                } else gameStatus++
+                if (inputText.lowercase() == mysteryWord) { winToast(true) }
+                else {
+                    if (gameStatus == GameStatus.W6) {
+                        gameStatus = GameStatus.NG
+                        if (inputText.lowercase() != mysteryWord) winToast(false)
+                    } else gameStatus++
+                }
             }
         } else {
             val myToast =
@@ -71,14 +75,14 @@ MainActivity : AppCompatActivity() {
         var text = ""
         if (isWin) {
             text = getString(R.string.info_win) + " " + mysteryWord.uppercase()
-
         } else {
             text = getString(R.string.info_loose) + " " + mysteryWord.uppercase()
 
         }
         val myToast =
-            Toast.makeText(this, text, Toast.LENGTH_SHORT)
+            Toast.makeText(this, text, Toast.LENGTH_LONG)
         myToast.show()
+        gameStatus = GameStatus.NG
     }
 
     fun findInDatabase(word: String): Boolean {

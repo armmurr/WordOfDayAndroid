@@ -6,7 +6,7 @@
     <string name="max_of_words">Слово из 5 букв:</string>
     <string name="info_need_five_letters">Слово должно быть из 5 букв!</string>
     <string name="info_we_unknown_that_word">Мы не знаем такого слова, попробуйе другое</string>
-    <string name="info_win">Ура!! Вы спарвились, слово было:</string>
-    <string name="info_loose">:( Вы не спарвились, слово было:</string>
+    <string name="info_win">Ура!! Вы справились, слово было:</string>
+    <string name="info_loose">:( Вы не справились, слово было:</string>
 
 </resources>
