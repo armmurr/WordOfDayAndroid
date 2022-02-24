@@ -96,16 +96,12 @@ MainActivity : AppCompatActivity() {
                 )
                 if (gameState.isWin) {
                     winToast(true)
-                    newGameButton.visibility = View.VISIBLE
-                    okGameButton.isEnabled = false
-                    textInputEditText.isEnabled = false
+                    enableNewGameBtn()
 
                 } else {
                     if (gameState.gameStatus == GameStatus.W6 && !gameState.isWin) {
                         winToast(false)
-                        newGameButton.visibility = View.VISIBLE
-                        okGameButton.isEnabled = false
-                        textInputEditText.isEnabled = false
+                        enableNewGameBtn()
 
                     }
                 }
@@ -173,11 +169,20 @@ MainActivity : AppCompatActivity() {
                 }
             }
         }
+        if (gameStatus == GameStatus.W6) {
+            enableNewGameBtn()
+        }
     }
 
     override fun onDestroy() {
         super.onDestroy()
         saveData()
+    }
+
+    fun enableNewGameBtn() {
+        newGameButton.visibility = View.VISIBLE
+        okGameButton.isEnabled = false
+        textInputEditText.isEnabled = false
     }
 
 //    override fun onResume() {
