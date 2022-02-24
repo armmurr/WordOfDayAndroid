@@ -2,58 +2,82 @@ package com.otototor.wordofday
 
 import android.app.Activity
 import android.content.Context
+import android.content.SharedPreferences
 import android.content.pm.ActivityInfo
-import android.content.res.TypedArray
 import android.os.Bundle
+import android.view.KeyEvent
 import android.view.View
+import android.view.inputmethod.EditorInfo
 import android.view.inputmethod.InputMethodManager
-import android.widget.TextView
+import android.widget.Button
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
-import androidx.core.content.ContextCompat
 import com.google.android.material.textfield.TextInputEditText
 
 
 class
 MainActivity : AppCompatActivity() {
-    private var gameStatus: Int = GameStatus.NG
     private var mysteryWord = ""
-    private lateinit var lettersBlocs: List<View>
-
+    private lateinit var wordsViewAdapter: WordsViewAdapter
+    private lateinit var newGameButton: Button
+    private lateinit var okGameButton: Button
+    private var gameState = GameState(GameStatus.NG, mutableListOf())
     private lateinit var textInputEditText: TextInputEditText
     private lateinit var words: List<String>
+    var sharePref: SharedPreferences? = null
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
-        lettersBlocs = listOf<View>(
-            findViewById(R.id.fivelettersblock_1),
-            findViewById(R.id.fivelettersblock_2),
-            findViewById(R.id.fivelettersblock_3),
-            findViewById(R.id.fivelettersblock_4),
-            findViewById(R.id.fivelettersblock_5),
-            findViewById(R.id.fivelettersblock_6))
+
+        sharePref = getSharedPreferences("GameState", Context.MODE_PRIVATE)
+        newGameButton = findViewById(R.id.newGameBtn)
+        okGameButton = findViewById(R.id.okButton)
+        wordsViewAdapter = WordsViewAdapter(this@MainActivity)
         textInputEditText = findViewById(R.id.textInputEditText)
+        textInputEditText.setOnEditorActionListener { _, actionId, event ->
+            if (actionId == EditorInfo.IME_ACTION_DONE ||
+                event.keyCode == KeyEvent.KEYCODE_ENTER && event.action == KeyEvent.ACTION_DOWN
+            ) {
+                processGame()
+                true
+            } else {
+                false
+            }
+        }
+
         words = Words().WordsLits
-        generateMysteryWord()
+        resumeGame()
+        mysteryWord = gameState.mysteryWord
         setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
     }
 
-    fun Context.hideKeyboard(view: View) {
-        val inputMethodManager = getSystemService(Activity.INPUT_METHOD_SERVICE) as InputMethodManager
+    private fun Context.hideKeyboard(view: View) {
+        val inputMethodManager =
+            getSystemService(Activity.INPUT_METHOD_SERVICE) as InputMethodManager
         inputMethodManager.hideSoftInputFromWindow(view.windowToken, 0)
     }
 
     fun enterTheWord(view: View) {
+        processGame()
+    }
+
+    fun newGame(view: View) {
+        gameState.newGame()
+        newGameButton.visibility = View.INVISIBLE
+        okGameButton.isEnabled = true
+        textInputEditText.isEnabled = true
+        wordsViewAdapter.clearWords()
+        mysteryWord = gameState.mysteryWord
+        saveData()
+    }
+
+    private fun processGame() {
         hideKeyboard(currentFocus ?: View(this))
-        if (gameStatus == GameStatus.NG) {
-            clearWords()
-            generateMysteryWord()
-            gameStatus = GameStatus.W1
-        }
         var inputText = textInputEditText.text.toString()
         if (inputText?.length == 5) {
-            var finded = findInDatabase(inputText)
-            if (!finded) {
+            var found = findInDatabase(inputText)
+            if (!found) {
                 val myToast = Toast.makeText(
                     this,
                     getString(R.string.info_we_unknown_that_word),
@@ -61,15 +85,31 @@ MainActivity : AppCompatActivity() {
                 )
                 myToast.show()
             } else {
-                fillLettersInFiveLettersView(lettersBlocs[gameStatus-1],inputText)
-                FindLetterInMysteryWord(inputText,lettersBlocs[gameStatus-1])
-                if (inputText.lowercase() == mysteryWord) { winToast(true) }
-                else {
-                    if (gameStatus == GameStatus.W6) {
-                        gameStatus = GameStatus.NG
-                        if (inputText.lowercase() != mysteryWord) winToast(false)
-                    } else gameStatus++
+
+                val word = EnteredWord(inputText, mysteryWord)
+                gameState.nextState(word)
+
+                wordsViewAdapter.fillLettersInFiveLettersView(
+                    word,
+                    gameState.gameStatus - 1,
+                    inputText
+                )
+                if (gameState.isWin) {
+                    winToast(true)
+                    newGameButton.visibility = View.VISIBLE
+                    okGameButton.isEnabled = false
+                    textInputEditText.isEnabled = false
+
+                } else {
+                    if (gameState.gameStatus == GameStatus.W6 && !gameState.isWin) {
+                        winToast(false)
+                        newGameButton.visibility = View.VISIBLE
+                        okGameButton.isEnabled = false
+                        textInputEditText.isEnabled = false
+
+                    }
                 }
+
             }
         } else {
             val myToast =
@@ -77,88 +117,80 @@ MainActivity : AppCompatActivity() {
             myToast.show()
         }
         textInputEditText.setText("")
+        saveData()
     }
 
-    fun winToast(isWin: Boolean) {
+    private fun winToast(isWin: Boolean) {
         var text = ""
-        if (isWin) {
-            text = getString(R.string.info_win) + " " + mysteryWord.uppercase()
+        text = if (isWin) {
+            getString(R.string.info_win) + " " + mysteryWord.uppercase()
         } else {
-            text = getString(R.string.info_loose) + " " + mysteryWord.uppercase()
+            getString(R.string.info_loose) + " " + mysteryWord.uppercase()
 
         }
         val myToast =
             Toast.makeText(this, text, Toast.LENGTH_LONG)
         myToast.show()
-        gameStatus = GameStatus.NG
     }
 
-    fun findInDatabase(word: String): Boolean {
-        var finded: Boolean = false
+    private fun findInDatabase(word: String): Boolean {
+        var found: Boolean = false
         if (words.contains(word.lowercase())) {
-            finded = true
+            found = true
         }
-        return finded
+        return found
     }
 
-    fun fillLettersInFiveLettersView (view : View, word : String) {
-        var recs = getRecs(view)
-        var i = 0
-        for (ch in word){
-            recs[i].text = ch.lowercase().toString()
-            i++
+    fun saveData() {
+        var editor = sharePref?.edit()
+        var wordSet: MutableSet<String> = mutableSetOf()
+        for (e in gameState.enteredWords) {
+            wordSet.add(e.word)
         }
+        editor?.putInt("GameState", gameState.gameStatus)
+        editor?.putStringSet("GameStrings", wordSet)
+        editor?.putString("MysteryWord", mysteryWord)
+        editor?.apply()
     }
 
-    fun clearWords() {
-        for (i in lettersBlocs){
-            var recs = getRecs(i)
-            for (j in recs){
-                j.text = ""
-                j.setTextColor(getTextColor(this,android.R.attr.textColorSecondary))
+    fun resumeGame() {
+        var wordSet = sharePref?.getStringSet("GameStrings", null)
+        var gameStatus = sharePref?.getInt("GameState", GameStatus.NG)
+        var mysteryWord = sharePref?.getString("MysteryWord", null)
+
+        if (wordSet != null) {
+            if (gameStatus != null) {
+                if (mysteryWord != null) {
+                    gameState.resumeGame(wordSet, gameStatus, mysteryWord)
+                    wordsViewAdapter.clearWords()
+                    for ((i, word) in gameState.enteredWords.withIndex()){
+                        wordsViewAdapter.fillLettersInFiveLettersView(
+                            word,
+                            i,
+                            word.word
+                        )
+                    }
+                }
             }
         }
     }
 
-    fun getTextColor(context: Context, attrId: Int): Int {
-        val typedArray: TypedArray = context.getTheme().obtainStyledAttributes(intArrayOf(attrId))
-        val textColor = typedArray.getColor(0, 0)
-        typedArray.recycle()
-        return textColor
+    override fun onDestroy() {
+        super.onDestroy()
+        saveData()
     }
 
-    fun generateMysteryWord() {
-        var word = ""
-        var i =  (0..words.count() - 1).random()
-        word = words.get(i)
-        mysteryWord = word
-    }
+//    override fun onResume() {
+//        super.onResume()
+//        resumeGame()
+//
+//    }
+//
+//    override fun onApplyThemeResource(theme: Resources.Theme?, resid: Int, first: Boolean) {
+//        super.onApplyThemeResource(theme, resid, first)
+//        resumeGame()
+//    }
 
-    fun getRecs (view : View): List<TextView> {
-        return listOf<TextView>(
-            view.findViewById(R.id.rec_1),
-            view.findViewById(R.id.rec_2),
-            view.findViewById(R.id.rec_3),
-            view.findViewById(R.id.rec_4),
-            view.findViewById(R.id.rec_5))
-    }
-
-    fun  FindLetterInMysteryWord(userWord:String, view : View)
-    {
-        var recs = getRecs(view)
-        var i = 0
-        for (ch in userWord) {
-            if (mysteryWord.contains(ch,true)){
-                recs[i].setTextColor(ContextCompat.getColor(this,R.color.orange))
-            }
-            if (mysteryWord[i] == ch)
-            {
-                recs[i].setTextColor(ContextCompat.getColor(this,R.color.green))
-            }
-            i++
-        }
-
-    }
 }
 
 

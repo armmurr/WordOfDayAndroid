@@ -8,5 +8,6 @@
     <string name="info_we_unknown_that_word">Мы не знаем такого слова, попробуйе другое</string>
     <string name="info_win">Ура!! Вы справились, слово было:</string>
     <string name="info_loose">:( Вы не справились, слово было:</string>
+    <string name="new_game">Новая игра</string>
 
 </resources>
