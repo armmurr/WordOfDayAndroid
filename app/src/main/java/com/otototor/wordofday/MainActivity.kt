@@ -139,11 +139,16 @@ MainActivity : AppCompatActivity() {
 
     fun saveData() {
         var editor = sharePref?.edit()
-        for ((i, e) in gameState.enteredWords.withIndex()) {
-            editor?.putString("GameStrings$i", e.word)
+
+        for (i in 0..5) {
+            var word = gameState.enteredWords.getOrNull(i)
+            if (word != null) {
+                editor?.putString("GameStrings$i", word.word)
+            } else
+                editor?.putString("GameStrings$i", null)
+
         }
         editor?.putInt("GameState", gameState.gameStatus)
-
         editor?.putString("MysteryWord", mysteryWord)
         editor?.apply()
     }
