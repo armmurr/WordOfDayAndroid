@@ -39,12 +39,12 @@ class GameState ( gameStatus:Int,  enteredWords: MutableList<EnteredWord>) {
         mysteryWord = word
     }
 
-    fun resumeGame(wordSet: MutableSet<String>, gameStatus: Int, mysteryWord: String){
+    fun resumeGame(wordList: MutableList<String>, gameStatus: Int, mysteryWord: String){
         this.gameStatus = gameStatus
         this.mysteryWord = mysteryWord
         this.enteredWords = mutableListOf()
-        if (wordSet != null) {
-            for (word in wordSet){
+        if (wordList != null && wordList.count() > 0) {
+            for (word in wordList){
                enteredWords.add(EnteredWord(word,mysteryWord))
             }
         }

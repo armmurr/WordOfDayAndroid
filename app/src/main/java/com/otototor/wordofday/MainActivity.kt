@@ -139,25 +139,31 @@ MainActivity : AppCompatActivity() {
 
     fun saveData() {
         var editor = sharePref?.edit()
-        var wordSet: MutableSet<String> = mutableSetOf()
-        for (e in gameState.enteredWords) {
-            wordSet.add(e.word)
+        for ((i, e) in gameState.enteredWords.withIndex()) {
+            editor?.putString("GameStrings$i", e.word)
         }
         editor?.putInt("GameState", gameState.gameStatus)
-        editor?.putStringSet("GameStrings", wordSet)
+
         editor?.putString("MysteryWord", mysteryWord)
         editor?.apply()
     }
 
     fun resumeGame() {
-        var wordSet = sharePref?.getStringSet("GameStrings", null)
+        var wordList: MutableList<String> = mutableListOf()
+        for (i in 0..5){
+            var word = sharePref?.getString("GameStrings$i", null)
+            if (word != null) {
+                wordList.add(word)
+            }
+        }
+
         var gameStatus = sharePref?.getInt("GameState", GameStatus.NG)
         var mysteryWord = sharePref?.getString("MysteryWord", null)
 
-        if (wordSet != null) {
+        if (wordList != null && wordList.count() > 0) {
             if (gameStatus != null) {
                 if (mysteryWord != null) {
-                    gameState.resumeGame(wordSet, gameStatus, mysteryWord)
+                    gameState.resumeGame(wordList, gameStatus, mysteryWord)
                     wordsViewAdapter.clearWords()
                     for ((i, word) in gameState.enteredWords.withIndex()){
                         wordsViewAdapter.fillLettersInFiveLettersView(
