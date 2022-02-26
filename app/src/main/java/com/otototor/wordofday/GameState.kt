@@ -33,7 +33,7 @@ class GameState ( gameStatus:Int,  enteredWords: MutableList<EnteredWord>) {
     }
 
     private fun generateMysteryWord() {
-        var word = ""
+        var word: String
         var i =  (0 until words.count()).random()
         word = words[i]
         mysteryWord = word
@@ -43,7 +43,7 @@ class GameState ( gameStatus:Int,  enteredWords: MutableList<EnteredWord>) {
         this.gameStatus = gameStatus
         this.mysteryWord = mysteryWord
         this.enteredWords = mutableListOf()
-        if (wordList != null && wordList.count() > 0) {
+        if (wordList.count() > 0) {
             for (word in wordList){
                enteredWords.add(EnteredWord(word,mysteryWord))
             }

@@ -82,9 +82,9 @@ MainActivity : AppCompatActivity() {
 
     private fun processGame() {
         hideKeyboard(currentFocus ?: View(this))
-        var inputText = textInputEditText.text.toString()
-        if (inputText?.length == 5) {
-            var found = findInDatabase(inputText)
+        val inputText = textInputEditText.text.toString()
+        if (inputText.length == 5) {
+            val found = findInDatabase(inputText)
             if (!found) {
                 helper.showToast(
                     this,
@@ -121,12 +121,10 @@ MainActivity : AppCompatActivity() {
     }
 
     private fun winToast(isWin: Boolean) {
-        var text = ""
-        text = if (isWin) {
+        val text: String = if (isWin) {
             getString(R.string.info_win) + " " + mysteryWord.uppercase()
         } else {
             getString(R.string.info_loose) + " " + mysteryWord.uppercase()
-
         }
         helper.showToast(this, text, Toast.LENGTH_LONG)
 
@@ -158,18 +156,18 @@ MainActivity : AppCompatActivity() {
 
     private fun resumeGame() {
         try {
-            var wordList: MutableList<String> = mutableListOf()
+            val wordList: MutableList<String> = mutableListOf()
             for (i in 0..5) {
-                var word = sharePref?.getString("GameStrings$i", null)
+                val word = sharePref?.getString("GameStrings$i", null)
                 if (word != null) {
                     wordList.add(word)
                 }
             }
 
-            var gameStatus = sharePref?.getInt("GameState", GameStatus.NG)
-            var mysteryWord = sharePref?.getString("MysteryWord", null)
+            val gameStatus = sharePref?.getInt("GameState", GameStatus.NG)
+            val mysteryWord = sharePref?.getString("MysteryWord", null)
 
-            if (wordList != null && wordList.count() > 0) {
+            if (wordList.count() > 0) {
                 if (gameStatus != null) {
                     if (mysteryWord != null) {
                         gameState.resumeGame(wordList, gameStatus, mysteryWord)
