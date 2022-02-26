@@ -12,7 +12,12 @@ import android.view.inputmethod.InputMethodManager
 import android.widget.Button
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
+import com.google.android.gms.ads.AdRequest
+import com.google.android.gms.ads.AdView
+import com.google.android.gms.ads.MobileAds
+import com.google.android.gms.ads.RequestConfiguration
 import com.google.android.material.textfield.TextInputEditText
+import java.util.*
 
 
 class
@@ -25,13 +30,14 @@ MainActivity : AppCompatActivity() {
     private lateinit var textInputEditText: TextInputEditText
     private lateinit var words: List<String>
     private val helper:Helpers = Helpers()
+    lateinit var mAdView : AdView
     var sharePref: SharedPreferences? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
 
-        sharePref = getSharedPreferences("GameState", Context.MODE_PRIVATE)
+        sharePref = getSharedPreferences("GameState", MODE_PRIVATE)
         newGameButton = findViewById(R.id.newGameBtn)
         okGameButton = findViewById(R.id.okButton)
         wordsViewAdapter = WordsViewAdapter(this@MainActivity)
@@ -51,6 +57,7 @@ MainActivity : AppCompatActivity() {
         resumeGame()
         mysteryWord = gameState.mysteryWord
         setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
+
     }
 
     private fun Context.hideKeyboard(view: View) {
@@ -192,15 +199,39 @@ MainActivity : AppCompatActivity() {
         }
     }
 
-    override fun onDestroy() {
-        super.onDestroy()
-        saveData()
-    }
+
 
     private fun enableNewGameBtn() {
         newGameButton.visibility = View.VISIBLE
         okGameButton.isEnabled = false
         textInputEditText.isEnabled = false
+    }
+
+    override fun onResume() {
+        super.onResume()
+        //mAdView.resume()
+    }
+    override fun onPause() {
+        super.onPause()
+        //mAdView.pause()
+    }
+
+    override fun onDestroy() {
+        super.onDestroy()
+        saveData()
+        //mAdView.destroy()
+    }
+
+    fun adsInit() {
+        val configuration = RequestConfiguration.Builder().setTestDeviceIds(Arrays.asList("5863910537C21309C6102FB2ADE898D2","02CD0377E76C9F3E1126A2C416BE480E")).build()
+        MobileAds.setRequestConfiguration(configuration)
+        MobileAds.initialize(this)
+
+
+        //mAdView = findViewById(R.id.adView)
+        val adRequest = AdRequest.Builder().build()
+
+        mAdView.loadAd(adRequest)
     }
 
 
