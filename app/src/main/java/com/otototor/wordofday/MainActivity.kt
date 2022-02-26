@@ -24,6 +24,7 @@ MainActivity : AppCompatActivity() {
     private var gameState = GameState(GameStatus.NG, mutableListOf())
     private lateinit var textInputEditText: TextInputEditText
     private lateinit var words: List<String>
+    private val helper:Helpers = Helpers()
     var sharePref: SharedPreferences? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -78,12 +79,11 @@ MainActivity : AppCompatActivity() {
         if (inputText?.length == 5) {
             var found = findInDatabase(inputText)
             if (!found) {
-                val myToast = Toast.makeText(
+                helper.showToast(
                     this,
                     getString(R.string.info_we_unknown_that_word),
                     Toast.LENGTH_SHORT
                 )
-                myToast.show()
             } else {
 
                 val word = EnteredWord(inputText, mysteryWord)
@@ -91,8 +91,7 @@ MainActivity : AppCompatActivity() {
 
                 wordsViewAdapter.fillLettersInFiveLettersView(
                     word,
-                    gameState.gameStatus - 1,
-                    inputText
+                    gameState.gameStatus - 1
                 )
                 if (gameState.isWin) {
                     winToast(true)
@@ -108,9 +107,7 @@ MainActivity : AppCompatActivity() {
 
             }
         } else {
-            val myToast =
-                Toast.makeText(this, getString(R.string.info_need_five_letters), Toast.LENGTH_SHORT)
-            myToast.show()
+            helper.showToast(this, getString(R.string.info_need_five_letters), Toast.LENGTH_SHORT)
         }
         textInputEditText.setText("")
         saveData()
@@ -124,9 +121,8 @@ MainActivity : AppCompatActivity() {
             getString(R.string.info_loose) + " " + mysteryWord.uppercase()
 
         }
-        val myToast =
-            Toast.makeText(this, text, Toast.LENGTH_LONG)
-        myToast.show()
+        helper.showToast(this, text, Toast.LENGTH_LONG)
+
     }
 
     private fun findInDatabase(word: String): Boolean {
@@ -137,13 +133,13 @@ MainActivity : AppCompatActivity() {
         return found
     }
 
-    fun saveData() {
+    private fun saveData() {
         var editor = sharePref?.edit()
 
         for (i in 0..5) {
             var word = gameState.enteredWords.getOrNull(i)
             if (word != null) {
-                editor?.putString("GameStrings$i", word.word)
+                editor?.putString("GameStrings$i", word.toString())
             } else
                 editor?.putString("GameStrings$i", null)
 
@@ -153,35 +149,46 @@ MainActivity : AppCompatActivity() {
         editor?.apply()
     }
 
-    fun resumeGame() {
-        var wordList: MutableList<String> = mutableListOf()
-        for (i in 0..5){
-            var word = sharePref?.getString("GameStrings$i", null)
-            if (word != null) {
-                wordList.add(word)
+    private fun resumeGame() {
+        try {
+            var wordList: MutableList<String> = mutableListOf()
+            for (i in 0..5) {
+                var word = sharePref?.getString("GameStrings$i", null)
+                if (word != null) {
+                    wordList.add(word)
+                }
             }
-        }
 
-        var gameStatus = sharePref?.getInt("GameState", GameStatus.NG)
-        var mysteryWord = sharePref?.getString("MysteryWord", null)
+            var gameStatus = sharePref?.getInt("GameState", GameStatus.NG)
+            var mysteryWord = sharePref?.getString("MysteryWord", null)
 
-        if (wordList != null && wordList.count() > 0) {
-            if (gameStatus != null) {
-                if (mysteryWord != null) {
-                    gameState.resumeGame(wordList, gameStatus, mysteryWord)
-                    wordsViewAdapter.clearWords()
-                    for ((i, word) in gameState.enteredWords.withIndex()){
-                        wordsViewAdapter.fillLettersInFiveLettersView(
-                            word,
-                            i,
-                            word.word
-                        )
+            if (wordList != null && wordList.count() > 0) {
+                if (gameStatus != null) {
+                    if (mysteryWord != null) {
+                        gameState.resumeGame(wordList, gameStatus, mysteryWord)
+                        wordsViewAdapter.clearWords()
+                        for ((i, word) in gameState.enteredWords.withIndex()) {
+                            wordsViewAdapter.fillLettersInFiveLettersView(
+                                word,
+                                i
+                            )
+                        }
                     }
                 }
             }
-        }
-        if (gameStatus == GameStatus.W6) {
-            enableNewGameBtn()
+            if (gameStatus == GameStatus.W6) {
+                enableNewGameBtn()
+            }
+        } catch (e: Exception) {
+            e.message?.let {
+                helper.showToast(
+                    this,
+                    it,
+                    Toast.LENGTH_SHORT
+                )
+            }
+            gameState.newGame()
+            saveData()
         }
     }
 
@@ -190,22 +197,13 @@ MainActivity : AppCompatActivity() {
         saveData()
     }
 
-    fun enableNewGameBtn() {
+    private fun enableNewGameBtn() {
         newGameButton.visibility = View.VISIBLE
         okGameButton.isEnabled = false
         textInputEditText.isEnabled = false
     }
 
-//    override fun onResume() {
-//        super.onResume()
-//        resumeGame()
-//
-//    }
-//
-//    override fun onApplyThemeResource(theme: Resources.Theme?, resid: Int, first: Boolean) {
-//        super.onApplyThemeResource(theme, resid, first)
-//        resumeGame()
-//    }
+
 
 }
 

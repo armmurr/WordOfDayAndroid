@@ -40,55 +40,15 @@ class WordsViewAdapter(private val activity: AppCompatActivity) {
         }
     }
 
-    fun fillLettersInFiveLettersView (enteredWord: EnteredWord, wordPos : Int, word : String) {
+    fun fillLettersInFiveLettersView (enteredWord: EnteredWord, wordPos : Int) {
         var recs = getRecs(wordPos)
-        var i = 0
-        for (ch in word){
-            recs[i].text = ch.lowercase()
-            i++
-        }
-        coloringBasedOnWord(enteredWord,wordPos)
-    }
+        val matchLetters = enteredWord.matchedLetters
 
-    private fun coloringBasedOnWord (enteredWord: EnteredWord, wordPos: Int){
-        val recs = getRecs(wordPos)
-        val word = enteredWord.word
-        val containsLetters = enteredWord.containsLetters
-        val matchLetters = enteredWord.matchLetters
-        var i = 0
-
-        for (ch in word) {
-            val count = containsLetters[ch]
-            if (count != null && count > 0) {
-                if (count > 1 && isHaveMatchWithThisWord(ch, matchLetters)) {
-                    containsLetters[ch] = count - 1
-                } else {
-                    containsLetters[ch] = count - 1
-                    recs[i].setTextColor(ContextCompat.getColor(activity, R.color.orange))
-                }
-            }
-            if (matchLetters[i].value) {
-                recs[i].setTextColor(ContextCompat.getColor(activity, R.color.green))
-            }
-            i++
+        for ((i, letter) in matchLetters.withIndex()) {
+            recs[i].text = letter.char.lowercase()
+            if (letter.color != null)
+                recs[i].setTextColor(ContextCompat.getColor(activity, letter.color!!))
         }
-    }
-
-    fun countOfLetterInWord (ch:Char,word:String):Int{ //кошка - шика надо переделывать
-        var i =0
-        for (wCh in word){
-            if (wCh == ch) i++
-        }
-        return i
-    }
-
-    fun isHaveMatchWithThisWord(ch:Char, matchLetters:MutableList<EnteredWord.Letters>):Boolean {
-        for (j in matchLetters){
-            if (j.key == ch) {
-                return  true
-            }
-        }
-        return  false
     }
 
     private fun getTextColor(context: Context, attrId: Int): Int {

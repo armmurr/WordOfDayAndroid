@@ -19,9 +19,9 @@ class GameState ( gameStatus:Int,  enteredWords: MutableList<EnteredWord>) {
         gameStatus = GameStatus.NG
     }
     fun nextState(word: EnteredWord) {
-        isWin = word.word.lowercase() == mysteryWord
-        when {
-            gameStatus == GameStatus.W6 -> {
+        isWin = word.isWinWord
+        when (gameStatus) {
+            GameStatus.W6 -> {
                 newGame()
             }
             else -> {
@@ -48,6 +48,5 @@ class GameState ( gameStatus:Int,  enteredWords: MutableList<EnteredWord>) {
                enteredWords.add(EnteredWord(word,mysteryWord))
             }
         }
-
     }
 }

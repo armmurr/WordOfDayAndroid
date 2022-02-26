@@ -1,35 +1,73 @@
 package com.otototor.wordofday
 
-class EnteredWord (val word: String, val mysteryWord: String ) {
-    var containsLetters: HashMap<Char,Int> = hashMapOf()
+class EnteredWord (word: String, mysteryWord: String ) {
+    private var _word = word
+    private var _mysteryWord = mysteryWord;
+    private var _containsLetters: HashMap<Char,Int> = hashMapOf()
+    var matchedLetters: MutableList<MatchedLetter> = mutableListOf()
         private set
-    var matchLetters: MutableList<Letters> = mutableListOf()
+    var isWinWord = false
         private set
 
     init {
-        findLetterInMysteryWord(word)
+        if (word.lowercase() == mysteryWord) {
+            isWinWord = true
+        }
+        findLetterInMysteryWord(_word)
+        calculateMatchedLetters(_containsLetters,matchedLetters)
     }
 
-    private fun  findLetterInMysteryWord(userWord:String)
+    override fun toString (): String {
+        return _word
+    }
+
+    private fun findLetterInMysteryWord(userWord:String)
     {
-
         var i = 0
-        for (ch in mysteryWord) {
+        for (ch in _mysteryWord) {
             if (userWord.contains(ch, true)) {
-                val count = containsLetters[ch]
+                val count = _containsLetters[ch]
                 if (count != null) {
-                    containsLetters[ch] = count + 1
-                } else
-                    containsLetters[ch] = 1
-
+                    _containsLetters[ch] = count + 1
+                } else {
+                    _containsLetters[ch] = 1
+                }
             }
-            matchLetters.add(i, Letters(userWord[i],userWord[i] == ch))
-
+            matchedLetters.add(i, MatchedLetter(userWord[i], userWord[i] == ch, null))
             i++
         }
-
     }
 
-    class Letters(val key: Char, val value: Boolean)
+    private fun calculateMatchedLetters (containsLetters:HashMap<Char,Int>, matchedLetters: List<MatchedLetter>){
+        var i = 0
+        for (letter in matchedLetters) {
+            val count = containsLetters[letter.char]
+            if (count != null && count > 0) {
+                if (matchedLetters[i].isMatched) {
+                    matchedLetters[i].color = matchColor
+                    containsLetters[letter.char] = count - 1
+                }
+            }
+            i++
+        }
+        i=0
+        for (letter in matchedLetters) {
+            val count = containsLetters[letter.char]
+            if (count != null && count > 0) {
+                if (!matchedLetters[i].isMatched) {
+                    matchedLetters[i].color = containsColor
+                    containsLetters[letter.char] = count - 1
+                }
+            }
+            i++
+        }
+    }
+
+    class MatchedLetter(val char: Char, val isMatched: Boolean, var color: Int?)
+
+    companion object {
+        const val matchColor = R.color.green
+        const val containsColor = R.color.orange
+    }
 
 }
