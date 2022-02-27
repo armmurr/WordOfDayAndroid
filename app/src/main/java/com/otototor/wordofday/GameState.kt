@@ -7,6 +7,7 @@ class GameState ( gameStatus:Int,  enteredWords: MutableList<EnteredWord>) {
         private set
     private val words = Words().WordsLits
     var isWin:Boolean = false
+        private set
     var mysteryWord = ""
         private set
     init {
@@ -39,10 +40,11 @@ class GameState ( gameStatus:Int,  enteredWords: MutableList<EnteredWord>) {
         mysteryWord = word
     }
 
-    fun resumeGame(wordList: MutableList<String>, gameStatus: Int, mysteryWord: String){
+    fun resumeGame(wordList: MutableList<String>, gameStatus: Int, mysteryWord: String, isWin:Boolean){
         this.gameStatus = gameStatus
         this.mysteryWord = mysteryWord
         this.enteredWords = mutableListOf()
+        this.isWin = isWin
         if (wordList.count() > 0) {
             for (word in wordList){
                enteredWords.add(EnteredWord(word,mysteryWord))

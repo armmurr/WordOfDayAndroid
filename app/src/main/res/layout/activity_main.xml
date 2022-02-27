@@ -7,63 +7,75 @@
     tools:context=".MainActivity"
     android:screenOrientation="portrait" >
 
+    <androidx.constraintlayout.widget.Guideline
+        android:id="@+id/guideline_margin_start"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        app:layout_constraintGuide_percent="0.04" />
+
+    <androidx.constraintlayout.widget.Guideline
+        android:id="@+id/guideline_margin_end"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        app:layout_constraintGuide_percent="0.96" />
+
 
     <ScrollView
         android:id="@+id/scrollView3"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent">
+        android:layout_width="0dp"
+        android:layout_height="match_parent"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toStartOf="@+id/guideline_margin_end"
+        app:layout_constraintStart_toStartOf="@+id/guideline_margin_start"
+       >
 
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="vertical">
 
-<!--            <com.google.android.gms.ads.AdView-->
-<!--                android:id="@+id/adView"-->
-<!--                android:layout_width="match_parent"-->
-<!--                android:layout_height="wrap_content"-->
-<!--                android:layout_alignParentBottom="true"-->
-<!--                android:layout_centerHorizontal="true"-->
-<!--                app:adSize="BANNER"-->
-<!--                app:adUnitId="ca-app-pub-3940256099942544/6300978111" />-->
+            <com.google.android.gms.ads.AdView
+                android:id="@+id/adView"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                app:adSize="BANNER"
+                app:adUnitId="ca-app-pub-3940256099942544/6300978111"
+                android:layout_marginBottom="20dp"
+                />
 
             <TextView
                 android:id="@+id/textView2"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginStart="18dp"
-                android:layout_marginTop="10dp"
+                android:layout_marginBottom="10dp"
+                android:breakStrategy="balanced"
                 android:fontFamily="sans-serif-black"
-                android:text="@string/wire_your_word"
-                android:textSize="48sp" />
-
-            <TextView
-                android:id="@+id/textView3"
-                android:layout_width="172dp"
-                android:layout_height="23dp"
-                android:layout_marginStart="20dp"
-                android:layout_marginTop="10dp"
-                android:text="@string/max_of_words" />
+                android:maxLines="1"
+                android:text="@string/guess_the_word"
+                android:textSize="48sp"
+                app:autoSizeTextType="uniform" />
 
             <LinearLayout
+                android:id="@+id/linearLayout"
                 android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:layout_marginStart="20dp"
-                android:layout_marginEnd="20dp"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="10dp"
                 android:orientation="horizontal">
+
 
                 <com.google.android.material.textfield.TextInputEditText
                     android:id="@+id/textInputEditText"
                     android:layout_width="0dp"
                     android:layout_height="47dp"
                     android:layout_weight="0.5"
+                    android:hint="@string/max_of_words"
                     android:imeOptions="actionDone"
                     android:lines="1"
                     android:maxLength="5"
                     android:singleLine="true"
-                    android:textColorHighlight="#DC5886"
-                    android:textColorLink="#FA0057"
-                    tools:ignore="SpeakableTextPresentCheck,TouchTargetSizeCheck" />
+                    tools:ignore="TouchTargetSizeCheck,TouchTargetSizeCheck,TouchTargetSizeCheck" />
 
                 <Button
                     android:id="@+id/okButton"
@@ -82,55 +94,61 @@
                 android:layout_height="wrap_content"
                 android:orientation="vertical">
 
-                <include
-                    android:id="@+id/fivelettersblock_1"
-                    layout="@layout/fiveletters"
-                    android:layout_width="match_parent"
-                    android:layout_height="70dp"
-                    android:layout_marginTop="40dp" />
-
-                <include
-                    android:id="@+id/fivelettersblock_2"
-                    layout="@layout/fiveletters"
-                    android:layout_width="match_parent"
-                    android:layout_height="70dp" />
-
-                <include
-                    android:id="@+id/fivelettersblock_3"
-                    layout="@layout/fiveletters"
-                    android:layout_width="match_parent"
-                    android:layout_height="70dp" />
-
-                <include
-                    android:id="@+id/fivelettersblock_4"
-                    layout="@layout/fiveletters"
-                    android:layout_width="match_parent"
-                    android:layout_height="70dp" />
-
-                <include
-                    android:id="@+id/fivelettersblock_5"
-                    layout="@layout/fiveletters"
-                    android:layout_width="match_parent"
-                    android:layout_height="70dp" />
-
-                <include
-                    android:id="@+id/fivelettersblock_6"
-                    layout="@layout/fiveletters"
-                    android:layout_width="match_parent"
-                    android:layout_height="70dp" />
-
                 <Button
                     android:id="@+id/newGameBtn"
                     android:layout_width="match_parent"
                     android:layout_height="61dp"
                     android:layout_marginStart="50dp"
-                    android:layout_marginTop="10dp"
                     android:layout_marginEnd="50dp"
+                    android:layout_marginBottom="10dp"
                     android:insetTop="6dp"
                     android:insetRight="0dp"
                     android:onClick="newGame"
                     android:text="@string/new_game"
-                    android:visibility="invisible" />
+                    android:visibility="gone" />
+
+                <include
+                    android:id="@+id/five_letters_block_1"
+                    layout="@layout/five_letters_block"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="10dp"
+                    android:layout_marginBottom="8dp" />
+
+                <include
+                    android:id="@+id/five_letters_block_2"
+                    layout="@layout/five_letters_block"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginBottom="8dp" />
+
+                <include
+                    android:id="@+id/five_letters_block_3"
+                    layout="@layout/five_letters_block"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginBottom="8dp" />
+
+                <include
+                    android:id="@+id/five_letters_block_4"
+                    layout="@layout/five_letters_block"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginBottom="8dp" />
+
+                <include
+                    android:id="@+id/five_letters_block_5"
+                    layout="@layout/five_letters_block"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginBottom="8dp" />
+
+                <include
+                    android:id="@+id/five_letters_block_6"
+                    layout="@layout/five_letters_block"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginBottom="8dp" />
 
             </LinearLayout>
         </LinearLayout>

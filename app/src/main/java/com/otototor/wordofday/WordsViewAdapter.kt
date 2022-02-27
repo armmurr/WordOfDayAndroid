@@ -10,12 +10,12 @@ import androidx.core.content.ContextCompat
 class WordsViewAdapter(private val activity: AppCompatActivity) {
 
     private val lettersBlocs = listOf<View>(
-        activity.findViewById(R.id.fivelettersblock_1),
-        activity.findViewById(R.id.fivelettersblock_2),
-        activity.findViewById(R.id.fivelettersblock_3),
-        activity.findViewById(R.id.fivelettersblock_4),
-        activity.findViewById(R.id.fivelettersblock_5),
-        activity.findViewById(R.id.fivelettersblock_6)
+        activity.findViewById(R.id.five_letters_block_1),
+        activity.findViewById(R.id.five_letters_block_2),
+        activity.findViewById(R.id.five_letters_block_3),
+        activity.findViewById(R.id.five_letters_block_4),
+        activity.findViewById(R.id.five_letters_block_5),
+        activity.findViewById(R.id.five_letters_block_6)
     )
 
 

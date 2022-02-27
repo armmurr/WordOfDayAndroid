@@ -13,11 +13,9 @@ import android.widget.Button
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import com.google.android.gms.ads.AdRequest
-import com.google.android.gms.ads.AdView
 import com.google.android.gms.ads.MobileAds
 import com.google.android.gms.ads.RequestConfiguration
 import com.google.android.material.textfield.TextInputEditText
-import java.util.*
 
 
 class
@@ -30,7 +28,7 @@ MainActivity : AppCompatActivity() {
     private lateinit var textInputEditText: TextInputEditText
     private lateinit var words: List<String>
     private val helper:Helpers = Helpers()
-    lateinit var mAdView : AdView
+    //lateinit var mAdView : AdView
     var sharePref: SharedPreferences? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -72,7 +70,7 @@ MainActivity : AppCompatActivity() {
 
     fun newGame(view: View) {
         gameState.newGame()
-        newGameButton.visibility = View.INVISIBLE
+        newGameButton.visibility = View.GONE
         okGameButton.isEnabled = true
         textInputEditText.isEnabled = true
         wordsViewAdapter.clearWords()
@@ -151,6 +149,7 @@ MainActivity : AppCompatActivity() {
         }
         editor?.putInt("GameState", gameState.gameStatus)
         editor?.putString("MysteryWord", mysteryWord)
+        editor?.putBoolean("IsWin", gameState.isWin)
         editor?.apply()
     }
 
@@ -166,22 +165,21 @@ MainActivity : AppCompatActivity() {
 
             val gameStatus = sharePref?.getInt("GameState", GameStatus.NG)
             val mysteryWord = sharePref?.getString("MysteryWord", null)
+            val isWin = sharePref?.getBoolean("IsWin", true)
 
             if (wordList.count() > 0) {
-                if (gameStatus != null) {
-                    if (mysteryWord != null) {
-                        gameState.resumeGame(wordList, gameStatus, mysteryWord)
-                        wordsViewAdapter.clearWords()
-                        for ((i, word) in gameState.enteredWords.withIndex()) {
-                            wordsViewAdapter.fillLettersInFiveLettersView(
-                                word,
-                                i
-                            )
-                        }
+                if (gameStatus != null && mysteryWord != null && isWin != null) {
+                    gameState.resumeGame(wordList, gameStatus, mysteryWord, isWin)
+                    wordsViewAdapter.clearWords()
+                    for ((i, word) in gameState.enteredWords.withIndex()) {
+                        wordsViewAdapter.fillLettersInFiveLettersView(
+                            word,
+                            i
+                        )
                     }
                 }
             }
-            if (gameStatus == GameStatus.W6) {
+            if (gameStatus == GameStatus.W6 || gameState.isWin) {
                 enableNewGameBtn()
             }
         } catch (e: Exception) {
@@ -207,7 +205,7 @@ MainActivity : AppCompatActivity() {
 
     override fun onResume() {
         super.onResume()
-        //mAdView.resume()
+       // mAdView.resume()
     }
     override fun onPause() {
         super.onPause()
@@ -220,8 +218,8 @@ MainActivity : AppCompatActivity() {
         //mAdView.destroy()
     }
 
-    fun adsInit() {
-        val configuration = RequestConfiguration.Builder().setTestDeviceIds(Arrays.asList("5863910537C21309C6102FB2ADE898D2","02CD0377E76C9F3E1126A2C416BE480E")).build()
+    private fun adsInit() {
+        val configuration = RequestConfiguration.Builder().setTestDeviceIds(listOf("5863910537C21309C6102FB2ADE898D2","02CD0377E76C9F3E1126A2C416BE480E")).build()
         MobileAds.setRequestConfiguration(configuration)
         MobileAds.initialize(this)
 
@@ -229,7 +227,7 @@ MainActivity : AppCompatActivity() {
         //mAdView = findViewById(R.id.adView)
         val adRequest = AdRequest.Builder().build()
 
-        mAdView.loadAd(adRequest)
+        //mAdView.loadAd(adRequest)
     }
 
 

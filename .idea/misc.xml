@@ -4,10 +4,31 @@
     <option name="filePathToZoomLevelMap">
       <map>
         <entry key="app/src/main/res/drawable-ldltr-small/rectagle.xml" value="0.2535" />
+        <entry key="app/src/main/res/drawable-v24/ic_launcher_foreground.xml" value="0.215" />
+        <entry key="app/src/main/res/drawable/_.xml" value="0.1495" />
+        <entry key="app/src/main/res/drawable/background_with_shadow.xml" value="0.2755" />
+        <entry key="app/src/main/res/drawable/ic__.xml" value="0.1495" />
+        <entry key="app/src/main/res/drawable/ic_component_1.xml" value="0.1495" />
+        <entry key="app/src/main/res/drawable/ic_launcher_background.xml" value="0.215" />
+        <entry key="app/src/main/res/drawable/logo.xml" value="0.1495" />
+        <entry key="app/src/main/res/drawable/logo_back.xml" value="0.215" />
+        <entry key="app/src/main/res/drawable/logo_fg.xml" value="0.1495" />
+        <entry key="app/src/main/res/drawable/logo_fg2.xml" value="0.1495" />
+        <entry key="app/src/main/res/drawable/logo_foregroud.xml" value="0.215" />
+        <entry key="app/src/main/res/drawable/popupbackground.xml" value="0.2755" />
         <entry key="app/src/main/res/drawable/rectangle.xml" value="0.2535" />
         <entry key="app/src/main/res/drawable/rectangle_1.xml" value="0.2535" />
-        <entry key="app/src/main/res/layout/activity_main.xml" value="0.303135274251302" />
+        <entry key="app/src/main/res/drawable/shadow.xml" value="0.2755" />
+        <entry key="app/src/main/res/layout/activity_main.xml" value="0.4299530029296875" />
+        <entry key="app/src/main/res/layout/five_letters_block.xml" value="0.1" />
         <entry key="app/src/main/res/layout/fiveletters.xml" value="0.29070739746093754" />
+        <entry key="app/src/main/res/layout/resultpopup.xml" value="0.4725069897483691" />
+        <entry key="app/src/main/res/layout/switch_item.xml" value="0.19972826086956522" />
+        <entry key="app/src/main/res/menu/header_menu.xml" value="0.382051282051282" />
+        <entry key="app/src/main/res/menu/popup.xml" value="0.382051282051282" />
+        <entry key="app/src/main/res/mipmap-anydpi-v26/ic_launcher.xml" value="0.1495" />
+        <entry key="app/src/main/res/mipmap-anydpi-v26/ic_launcher_round.xml" value="0.1" />
+        <entry key="app/src/main/res/xml/layer.xml" value="0.19972826086956522" />
       </map>
     </option>
   </component>
